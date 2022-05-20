@@ -20,8 +20,11 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -29,6 +32,7 @@ jobs:
           context: .
           file: ./frontend/scripts/docker-buildfiles/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
+          platforms: linux/arm64,linux/amd64
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/appflowy_client:${{ github.ref_name }}
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/af_build_cache:buildcache
